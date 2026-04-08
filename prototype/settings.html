@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prescription Buddy - Settings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <div class="phone-shell">
+    <div class="phone-screen">
+      <div class="dynamic-island"></div>
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="flex items-center gap-2 text-xs">
+          <i class="fa-solid fa-signal"></i>
+          <i class="fa-solid fa-wifi"></i>
+          <i class="fa-solid fa-battery-three-quarters"></i>
+        </div>
+      </div>
+      <main class="screen-content">
+        <section class="mb-5">
+          <p class="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Settings</p>
+          <h1 class="mt-2 text-3xl font-extrabold">Personalize how Prescription Buddy supports you.</h1>
+        </section>
+        <section class="mb-5">
+          <div class="section-title">
+            <h2>Notifications</h2>
+            <span>Live</span>
+          </div>
+          <div class="glass-card rx-card">
+            <div class="list-row"><div><p class="font-bold">Dose reminders</p><p class="text-sm text-slate-500">Timely alerts with follow-up nudges</p></div><div class="h-8 w-14 rounded-full bg-emerald-800 p-1"><div class="ml-auto h-6 w-6 rounded-full bg-white"></div></div></div>
+            <div class="divider"></div>
+            <div class="list-row"><div><p class="font-bold">Price drop alerts</p><p class="text-sm text-slate-500">Notify when a better offer appears</p></div><div class="h-8 w-14 rounded-full bg-emerald-800 p-1"><div class="ml-auto h-6 w-6 rounded-full bg-white"></div></div></div>
+            <div class="divider"></div>
+            <div class="list-row"><div><p class="font-bold">Caregiver backup</p><p class="text-sm text-slate-500">Message a trusted contact if missed</p></div><div class="h-8 w-14 rounded-full bg-slate-300 p-1"><div class="h-6 w-6 rounded-full bg-white"></div></div></div>
+          </div>
+        </section>
+        <section class="mb-5">
+          <div class="section-title">
+            <h2>Privacy</h2>
+            <span>Protected</span>
+          </div>
+          <div class="glass-card rx-card">
+            <div class="rounded-[24px] bg-white/80 p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="font-bold">Face ID for launch</p>
+                  <p class="mt-1 text-sm text-slate-500">Required after 3 minutes away</p>
+                </div>
+                <i class="fa-solid fa-face-smile text-2xl text-emerald-800"></i>
+              </div>
+            </div>
+            <div class="mt-4 rounded-[24px] bg-white/80 p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="font-bold">Health data access</p>
+                  <p class="mt-1 text-sm text-slate-500">Medication schedule shared with Apple Health</p>
+                </div>
+                <span class="rounded-2xl bg-amber-100 px-3 py-2 text-xs font-bold text-amber-700">Limited</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="section-title">
+            <h2>Support</h2>
+            <span>Always on</span>
+          </div>
+          <div class="glass-card rx-card">
+            <div class="list-row"><div class="flex items-center gap-3"><div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800"><i class="fa-solid fa-headset"></i></div><span class="font-bold">Chat with medication concierge</span></div><i class="fa-solid fa-chevron-right text-slate-400"></i></div>
+            <div class="divider"></div>
+            <div class="list-row"><div class="flex items-center gap-3"><div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-amber-700"><i class="fa-solid fa-circle-info"></i></div><span class="font-bold">Release notes & trust center</span></div><i class="fa-solid fa-chevron-right text-slate-400"></i></div>
+          </div>
+        </section>
+      </main>
+      <nav class="tab-bar">
+        <div class="tab-item"><i class="fa-solid fa-house text-base"></i><span>Home</span></div>
+        <div class="tab-item"><i class="fa-solid fa-bell text-base"></i><span>Reminders</span></div>
+        <div class="tab-item"><i class="fa-solid fa-wallet text-base"></i><span>Pricing</span></div>
+        <div class="tab-item active"><i class="fa-solid fa-user text-base"></i><span>Settings</span></div>
+      </nav>
+    </div>
+  </div>
+</body>
+</html>

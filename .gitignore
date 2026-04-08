@@ -1,0 +1,20 @@
+# Root
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.iml
+
+# Flutter / Dart
+**/.dart_tool/
+**/.dart-tool/
+**/.flutter-plugins-dependencies
+**/.pub/
+**/.pub-cache/
+**/build/
+**/coverage/
+**/ios/Flutter/.last_build_id
+
+# Logs
+*.log

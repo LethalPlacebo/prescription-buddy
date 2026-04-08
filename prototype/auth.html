@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prescription Buddy - Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <div class="phone-shell">
+    <div class="phone-screen">
+      <div class="dynamic-island"></div>
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="flex items-center gap-2 text-xs">
+          <i class="fa-solid fa-signal"></i>
+          <i class="fa-solid fa-wifi"></i>
+          <i class="fa-solid fa-battery-full"></i>
+        </div>
+      </div>
+      <main class="screen-content">
+        <section class="glass-card hero-card mb-5 overflow-hidden">
+          <img class="h-40 w-full rounded-[22px] object-cover" src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=900&q=80" alt="Healthcare professional using a tablet" />
+          <div class="mt-5">
+            <div class="mini-label text-slate-700">
+              <i class="fa-solid fa-heart-circle-check text-emerald-700"></i>
+              Welcome
+            </div>
+            <h1 class="mt-4 text-3xl font-extrabold leading-tight">Sign in or create your Prescription Buddy account.</h1>
+            <p class="mt-3 text-sm leading-6 text-slate-500">Securely sync prescriptions, reminders, savings, and refill tracking across devices.</p>
+          </div>
+        </section>
+
+        <section class="mb-5">
+          <div class="glass-card rx-card">
+            <div class="grid grid-cols-2 gap-2 rounded-[22px] bg-white/70 p-2">
+              <button class="rounded-[18px] bg-slate-900 py-3 text-sm font-bold text-white">Log in</button>
+              <button class="rounded-[18px] py-3 text-sm font-bold text-slate-500">Create account</button>
+            </div>
+
+            <div class="mt-5 space-y-4">
+              <label class="block">
+                <span class="mb-2 block text-sm font-semibold text-slate-600">Email</span>
+                <div class="flex items-center gap-3 rounded-[20px] bg-white/85 px-4 py-4">
+                  <i class="fa-regular fa-envelope text-slate-400"></i>
+                  <span class="text-sm text-slate-400">sophia@prescriptionbuddy.com</span>
+                </div>
+              </label>
+
+              <label class="block">
+                <span class="mb-2 block text-sm font-semibold text-slate-600">Password</span>
+                <div class="flex items-center gap-3 rounded-[20px] bg-white/85 px-4 py-4">
+                  <i class="fa-solid fa-lock text-slate-400"></i>
+                  <span class="text-sm tracking-[0.35em] text-slate-400">••••••••••</span>
+                  <i class="fa-regular fa-eye ml-auto text-slate-400"></i>
+                </div>
+              </label>
+            </div>
+
+            <div class="mt-4 flex items-center justify-between text-sm">
+              <label class="flex items-center gap-2 text-slate-500">
+                <span class="flex h-5 w-5 items-center justify-center rounded-md bg-emerald-800 text-[10px] text-white">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                Keep me signed in
+              </label>
+              <span class="font-semibold text-emerald-800">Forgot password?</span>
+            </div>
+
+            <button class="mt-5 w-full rounded-[22px] bg-emerald-800 py-4 text-sm font-bold text-white">Continue to Dashboard</button>
+
+            <div class="my-5 flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              <div class="h-px flex-1 bg-slate-200"></div>
+              Or continue with
+              <div class="h-px flex-1 bg-slate-200"></div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <button class="rounded-[20px] bg-white/85 py-4 text-sm font-bold text-slate-700">
+                <i class="fa-brands fa-apple mr-2"></i>
+                Apple
+              </button>
+              <button class="rounded-[20px] bg-white/85 py-4 text-sm font-bold text-slate-700">
+                <i class="fa-brands fa-google mr-2"></i>
+                Google
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="glass-card rx-card">
+            <p class="text-sm font-semibold text-slate-600">New here?</p>
+            <p class="mt-2 text-sm leading-6 text-slate-500">Create an account to build your medication list, set reminders, and unlock pricing insights tied to your plan and pharmacy preferences.</p>
+            <button class="mt-4 w-full rounded-[22px] bg-slate-900 py-4 text-sm font-bold text-white">Start your account</button>
+          </div>
+        </section>
+      </main>
+
+      <nav class="tab-bar">
+        <div class="tab-item active">
+          <i class="fa-solid fa-right-to-bracket text-base"></i>
+          <span>Access</span>
+        </div>
+        <div class="tab-item">
+          <i class="fa-solid fa-user-plus text-base"></i>
+          <span>Register</span>
+        </div>
+        <div class="tab-item">
+          <i class="fa-solid fa-shield-heart text-base"></i>
+          <span>Secure</span>
+        </div>
+        <div class="tab-item">
+          <i class="fa-solid fa-circle-question text-base"></i>
+          <span>Help</span>
+        </div>
+      </nav>
+    </div>
+  </div>
+</body>
+</html>

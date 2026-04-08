@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prescription Buddy - Reminders</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <div class="phone-shell">
+    <div class="phone-screen">
+      <div class="dynamic-island"></div>
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="flex items-center gap-2 text-xs">
+          <i class="fa-solid fa-signal"></i>
+          <i class="fa-solid fa-wifi"></i>
+          <i class="fa-solid fa-battery-full"></i>
+        </div>
+      </div>
+      <main class="screen-content">
+        <section class="glass-card hero-card mb-5">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Reminders</p>
+              <h1 class="mt-2 text-3xl font-extrabold">Precision timing for every dose.</h1>
+            </div>
+            <button class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-800 text-white">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+          <div class="mt-5 rounded-[28px] bg-slate-900 p-5 text-white">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-semibold text-white/70">Next alert</p>
+                <p class="mt-2 text-3xl font-extrabold">11:30 AM</p>
+              </div>
+              <div class="rounded-3xl bg-white/10 px-4 py-3 text-sm font-semibold">In 24 min</div>
+            </div>
+            <p class="mt-4 text-sm text-white/70">Amoxicillin 500mg • Take after food</p>
+          </div>
+        </section>
+        <section class="mb-5">
+          <div class="section-title">
+            <h2>Today</h2>
+            <span>4 active</span>
+          </div>
+          <div class="glass-card rx-card">
+            <div class="rounded-[24px] bg-white/80 p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Morning</p>
+                  <p class="mt-2 text-lg font-extrabold">Amoxicillin 500mg</p>
+                </div>
+                <div class="rounded-2xl bg-emerald-100 px-4 py-2 text-xs font-bold text-emerald-800">11:30 AM</div>
+              </div>
+              <div class="mt-4 flex items-center gap-3 text-sm text-slate-500">
+                <i class="fa-solid fa-bowl-food text-amber-600"></i>
+                <span>After breakfast</span>
+                <i class="fa-solid fa-volume-high ml-auto text-slate-400"></i>
+              </div>
+            </div>
+            <div class="mt-4 rounded-[24px] bg-white/70 p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Afternoon</p>
+                  <p class="mt-2 text-lg font-extrabold">Metformin ER</p>
+                </div>
+                <div class="rounded-2xl bg-amber-100 px-4 py-2 text-xs font-bold text-amber-800">2:00 PM</div>
+              </div>
+              <div class="mt-4 flex items-center gap-3 text-sm text-slate-500">
+                <i class="fa-solid fa-repeat text-emerald-700"></i>
+                <span>Repeats daily</span>
+                <i class="fa-solid fa-heart-pulse ml-auto text-rose-500"></i>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="mb-5">
+          <div class="section-title">
+            <h2>Smart setup</h2>
+            <span>Personalized</span>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="glass-card rx-card">
+              <p class="text-sm font-semibold text-slate-500">Quiet hours</p>
+              <p class="mt-3 text-2xl font-extrabold">10 PM</p>
+              <p class="mt-1 text-xs text-slate-500">Auto-reschedule overnight doses</p>
+            </div>
+            <div class="glass-card rx-card">
+              <p class="text-sm font-semibold text-slate-500">Caregiver</p>
+              <p class="mt-3 text-2xl font-extrabold">On</p>
+              <p class="mt-1 text-xs text-slate-500">Missed dose text backup</p>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="section-title">
+            <h2>Weekly cadence</h2>
+            <span>Optimized</span>
+          </div>
+          <div class="glass-card rx-card">
+            <div class="grid grid-cols-7 gap-2 text-center text-xs font-semibold text-slate-500">
+              <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+            </div>
+            <div class="mt-3 grid grid-cols-7 gap-2">
+              <div class="rounded-2xl bg-emerald-800 py-4 text-center text-sm font-bold text-white">3</div>
+              <div class="rounded-2xl bg-white/70 py-4 text-center text-sm font-bold text-slate-700">4</div>
+              <div class="rounded-2xl bg-white/70 py-4 text-center text-sm font-bold text-slate-700">5</div>
+              <div class="rounded-2xl bg-amber-100 py-4 text-center text-sm font-bold text-amber-700">6</div>
+              <div class="rounded-2xl bg-white/70 py-4 text-center text-sm font-bold text-slate-700">4</div>
+              <div class="rounded-2xl bg-white/70 py-4 text-center text-sm font-bold text-slate-700">2</div>
+              <div class="rounded-2xl bg-white/70 py-4 text-center text-sm font-bold text-slate-700">2</div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <nav class="tab-bar">
+        <div class="tab-item"><i class="fa-solid fa-house text-base"></i><span>Home</span></div>
+        <div class="tab-item active"><i class="fa-solid fa-bell text-base"></i><span>Reminders</span></div>
+        <div class="tab-item"><i class="fa-solid fa-wallet text-base"></i><span>Pricing</span></div>
+        <div class="tab-item"><i class="fa-solid fa-user text-base"></i><span>Profile</span></div>
+      </nav>
+    </div>
+  </div>
+</body>
+</html>

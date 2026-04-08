@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prescription Buddy - Design</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <div class="phone-shell">
+    <div class="phone-screen">
+      <div class="dynamic-island"></div>
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="flex items-center gap-2 text-xs">
+          <i class="fa-solid fa-signal"></i>
+          <i class="fa-solid fa-wifi"></i>
+          <i class="fa-solid fa-battery-full"></i>
+        </div>
+      </div>
+      <main class="screen-content">
+        <section class="glass-card hero-card mb-5">
+          <div class="mini-label text-slate-700">
+            <i class="fa-solid fa-compass-drafting text-emerald-700"></i>
+            Product design
+          </div>
+          <h1 class="mt-4 text-3xl font-extrabold leading-tight">Prescription Buddy is built around trust, timeliness, and transparent savings.</h1>
+        </section>
+        <section class="mb-5">
+          <div class="section-title">
+            <h2>User needs</h2>
+            <span>1</span>
+          </div>
+          <div class="glass-card rx-card">
+            <p class="font-bold">Core user jobs</p>
+            <p class="mt-2 text-sm leading-6 text-slate-500">Find a medication quickly, understand what to take and when, avoid missed doses, and pay the lowest reliable price without extra research.</p>
+          </div>
+        </section>
+        <section class="mb-5">
+          <div class="section-title">
+            <h2>Interaction logic</h2>
+            <span>2</span>
+          </div>
+          <div class="glass-card rx-card">
+            <div class="space-y-4 text-sm leading-6 text-slate-500">
+              <p><span class="font-bold text-slate-900">Search:</span> users discover medications and add them to a persistent list.</p>
+              <p><span class="font-bold text-slate-900">Track:</span> each prescription exposes details, refill timing, and adherence status.</p>
+              <p><span class="font-bold text-slate-900">Remind:</span> reminders adapt to schedule, meal timing, and caregiver backup.</p>
+              <p><span class="font-bold text-slate-900">Optimize:</span> pricing compares nearby and mail-order pharmacies with savings guidance.</p>
+            </div>
+          </div>
+        </section>
+        <section class="mb-5">
+          <div class="section-title">
+            <h2>Screen architecture</h2>
+            <span>3</span>
+          </div>
+          <div class="glass-card rx-card">
+            <div class="grid grid-cols-2 gap-3 text-sm">
+              <div class="rounded-2xl bg-white/80 p-4"><p class="font-bold">Home</p><p class="mt-2 text-slate-500">Search, overview, active list</p></div>
+              <div class="rounded-2xl bg-white/80 p-4"><p class="font-bold">Reminders</p><p class="mt-2 text-slate-500">Dose schedule and setup</p></div>
+              <div class="rounded-2xl bg-white/80 p-4"><p class="font-bold">Pricing</p><p class="mt-2 text-slate-500">Comparison and savings</p></div>
+              <div class="rounded-2xl bg-white/80 p-4"><p class="font-bold">Details</p><p class="mt-2 text-slate-500">Instructions, refill, notes</p></div>
+              <div class="rounded-2xl bg-white/80 p-4"><p class="font-bold">Profile</p><p class="mt-2 text-slate-500">Insurance and care team</p></div>
+              <div class="rounded-2xl bg-white/80 p-4"><p class="font-bold">Admin</p><p class="mt-2 text-slate-500">Price governance and approvals</p></div>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="section-title">
+            <h2>Design direction</h2>
+            <span>4</span>
+          </div>
+          <div class="glass-card rx-card">
+            <p class="text-sm leading-6 text-slate-500">Warm clinical tones, premium editorial typography, high-contrast actions, and iOS-native spacing patterns were chosen to signal safety while still feeling venture-scale and modern.</p>
+          </div>
+        </section>
+      </main>
+      <nav class="tab-bar">
+        <div class="tab-item active"><i class="fa-solid fa-compass-drafting text-base"></i><span>Design</span></div>
+        <div class="tab-item"><i class="fa-solid fa-house text-base"></i><span>Home</span></div>
+        <div class="tab-item"><i class="fa-solid fa-bell text-base"></i><span>Flow</span></div>
+        <div class="tab-item"><i class="fa-solid fa-user-shield text-base"></i><span>Admin</span></div>
+      </nav>
+    </div>
+  </div>
+</body>
+</html>

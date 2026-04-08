@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prescription Buddy - Prescription Detail</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <div class="phone-shell">
+    <div class="phone-screen">
+      <div class="dynamic-island"></div>
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="flex items-center gap-2 text-xs">
+          <i class="fa-solid fa-signal"></i>
+          <i class="fa-solid fa-wifi"></i>
+          <i class="fa-solid fa-battery-half"></i>
+        </div>
+      </div>
+      <main class="screen-content">
+        <section class="mb-5 flex items-center justify-between">
+          <button class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/80 text-slate-800 shadow-sm"><i class="fa-solid fa-chevron-left"></i></button>
+          <div class="text-center">
+            <p class="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">Prescription</p>
+            <h1 class="mt-1 text-xl font-extrabold">Atorvastatin 20mg</h1>
+          </div>
+          <button class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/80 text-slate-800 shadow-sm"><i class="fa-solid fa-ellipsis"></i></button>
+        </section>
+        <section class="glass-card hero-card mb-5">
+          <div class="flex items-center gap-4">
+            <div class="flex h-16 w-16 items-center justify-center rounded-[24px] bg-emerald-100 text-emerald-800">
+              <i class="fa-solid fa-capsules text-2xl"></i>
+            </div>
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Cholesterol care</p>
+              <p class="mt-1 text-2xl font-extrabold">1 tablet daily</p>
+              <p class="mt-1 text-sm text-slate-500">Prescribed by Dr. Elaine Brooks</p>
+            </div>
+          </div>
+          <div class="mt-5 grid grid-cols-3 gap-3 text-center">
+            <div class="rounded-2xl bg-white/80 p-3"><p class="text-xs font-semibold text-slate-500">Dose</p><p class="mt-2 text-lg font-extrabold">20mg</p></div>
+            <div class="rounded-2xl bg-white/80 p-3"><p class="text-xs font-semibold text-slate-500">Supply</p><p class="mt-2 text-lg font-extrabold">30 days</p></div>
+            <div class="rounded-2xl bg-white/80 p-3"><p class="text-xs font-semibold text-slate-500">Refills</p><p class="mt-2 text-lg font-extrabold">2 left</p></div>
+          </div>
+        </section>
+        <section class="mb-5">
+          <div class="section-title">
+            <h2>Instructions</h2>
+            <span>Reviewed</span>
+          </div>
+          <div class="glass-card rx-card">
+            <div class="flex items-start gap-3">
+              <div class="mt-1 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-amber-700"><i class="fa-solid fa-sun"></i></div>
+              <div>
+                <p class="font-bold">Take with dinner</p>
+                <p class="mt-1 text-sm leading-6 text-slate-500">Best tolerated in the evening. Avoid grapefruit juice and keep a consistent routine.</p>
+              </div>
+            </div>
+            <div class="mt-4 rounded-[24px] bg-white/80 p-4">
+              <p class="text-sm font-semibold text-slate-500">Reminder setup</p>
+              <div class="mt-3 flex items-center justify-between">
+                <span class="text-base font-bold">Daily at 6:30 PM</span>
+                <span class="rounded-2xl bg-emerald-800 px-3 py-2 text-xs font-bold text-white">Enabled</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="mb-5">
+          <div class="section-title">
+            <h2>Price history</h2>
+            <span>30 days</span>
+          </div>
+          <div class="glass-card rx-card">
+            <div class="flex h-36 items-end gap-3">
+              <div class="w-full rounded-t-[18px] bg-emerald-200" style="height: 62%;"></div>
+              <div class="w-full rounded-t-[18px] bg-emerald-300" style="height: 72%;"></div>
+              <div class="w-full rounded-t-[18px] bg-emerald-500" style="height: 58%;"></div>
+              <div class="w-full rounded-t-[18px] bg-emerald-700" style="height: 46%;"></div>
+              <div class="w-full rounded-t-[18px] bg-amber-400" style="height: 66%;"></div>
+              <div class="w-full rounded-t-[18px] bg-slate-300" style="height: 76%;"></div>
+            </div>
+            <div class="mt-4 flex items-center justify-between text-sm">
+              <span class="text-slate-500">Current best price</span>
+              <span class="font-extrabold">$9.90 at Walgreens</span>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="section-title">
+            <h2>Care notes</h2>
+            <span>Secure</span>
+          </div>
+          <div class="glass-card rx-card">
+            <p class="text-sm leading-6 text-slate-500">Symptoms improved after 3 weeks. Refill should be aligned with annual physical on April 4.</p>
+            <button class="mt-4 w-full rounded-[22px] bg-slate-900 py-4 text-sm font-bold text-white">Update prescription</button>
+          </div>
+        </section>
+      </main>
+      <nav class="tab-bar">
+        <div class="tab-item active"><i class="fa-solid fa-house text-base"></i><span>Home</span></div>
+        <div class="tab-item"><i class="fa-solid fa-bell text-base"></i><span>Reminders</span></div>
+        <div class="tab-item"><i class="fa-solid fa-wallet text-base"></i><span>Pricing</span></div>
+        <div class="tab-item"><i class="fa-solid fa-user text-base"></i><span>Profile</span></div>
+      </nav>
+    </div>
+  </div>
+</body>
+</html>

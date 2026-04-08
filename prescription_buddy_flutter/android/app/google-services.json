@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "671488202637",
+    "project_id": "prescription-buddy",
+    "storage_bucket": "prescription-buddy.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:671488202637:android:b05089d0bb56ab45730fc4",
+        "android_client_info": {
+          "package_name": "com.example.prescription_buddy_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDj_lN8U_VRlE7seIGzd6l9WmIfQb8SfWc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

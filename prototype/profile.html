@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prescription Buddy - Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <div class="phone-shell">
+    <div class="phone-screen">
+      <div class="dynamic-island"></div>
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="flex items-center gap-2 text-xs">
+          <i class="fa-solid fa-signal"></i>
+          <i class="fa-solid fa-wifi"></i>
+          <i class="fa-solid fa-battery-full"></i>
+        </div>
+      </div>
+      <main class="screen-content">
+        <section class="glass-card hero-card mb-5">
+          <div class="flex items-center gap-4">
+            <div class="avatar-ring h-20 w-20 rounded-[26px]">
+              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=240&q=80" alt="Patient avatar" />
+            </div>
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Profile</p>
+              <h1 class="mt-1 text-3xl font-extrabold">Sophia Bennett</h1>
+              <p class="mt-2 text-sm text-slate-500">Member since 2024 • San Francisco, CA</p>
+            </div>
+          </div>
+          <div class="mt-5 grid grid-cols-3 gap-3">
+            <div class="rounded-2xl bg-white/80 p-3 text-center"><p class="text-xs font-semibold text-slate-500">Adherence</p><p class="mt-2 text-lg font-extrabold">96%</p></div>
+            <div class="rounded-2xl bg-white/80 p-3 text-center"><p class="text-xs font-semibold text-slate-500">Doctors</p><p class="mt-2 text-lg font-extrabold">3</p></div>
+            <div class="rounded-2xl bg-white/80 p-3 text-center"><p class="text-xs font-semibold text-slate-500">Coverage</p><p class="mt-2 text-lg font-extrabold">PPO</p></div>
+          </div>
+        </section>
+        <section class="mb-5">
+          <div class="section-title">
+            <h2>Care team</h2>
+            <span>Synced</span>
+          </div>
+          <div class="glass-card rx-card">
+            <div class="list-row"><div><p class="font-bold">Dr. Elaine Brooks</p><p class="text-sm text-slate-500">Primary care physician</p></div><i class="fa-solid fa-chevron-right text-slate-400"></i></div>
+            <div class="divider"></div>
+            <div class="list-row"><div><p class="font-bold">Nina Park, PharmD</p><p class="text-sm text-slate-500">Medication therapy advisor</p></div><i class="fa-solid fa-chevron-right text-slate-400"></i></div>
+          </div>
+        </section>
+        <section class="mb-5">
+          <div class="section-title">
+            <h2>Insurance & savings</h2>
+            <span>Protected</span>
+          </div>
+          <div class="glass-card rx-card">
+            <div class="rounded-[24px] bg-slate-900 p-5 text-white">
+              <p class="text-sm font-semibold text-white/70">Primary plan</p>
+              <p class="mt-2 text-xl font-extrabold">Blue Shield PPO Gold</p>
+              <p class="mt-2 text-sm text-white/70">Digital Rx card ready for pharmacy pickup.</p>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <div class="rounded-2xl bg-white/80 p-4"><p class="text-sm font-semibold text-slate-500">Deductible met</p><p class="mt-2 text-xl font-extrabold">78%</p></div>
+              <div class="rounded-2xl bg-white/80 p-4"><p class="text-sm font-semibold text-slate-500">Coupon wallet</p><p class="mt-2 text-xl font-extrabold">8 saved</p></div>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="section-title">
+            <h2>Account actions</h2>
+            <span>Secure</span>
+          </div>
+          <div class="glass-card rx-card">
+            <div class="list-row"><div class="flex items-center gap-3"><div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800"><i class="fa-solid fa-gear"></i></div><span class="font-bold">Notification preferences</span></div><i class="fa-solid fa-chevron-right text-slate-400"></i></div>
+            <div class="divider"></div>
+            <div class="list-row"><div class="flex items-center gap-3"><div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-amber-700"><i class="fa-solid fa-file-medical"></i></div><span class="font-bold">Export medication list</span></div><i class="fa-solid fa-chevron-right text-slate-400"></i></div>
+          </div>
+        </section>
+      </main>
+      <nav class="tab-bar">
+        <div class="tab-item"><i class="fa-solid fa-house text-base"></i><span>Home</span></div>
+        <div class="tab-item"><i class="fa-solid fa-bell text-base"></i><span>Reminders</span></div>
+        <div class="tab-item"><i class="fa-solid fa-wallet text-base"></i><span>Pricing</span></div>
+        <div class="tab-item active"><i class="fa-solid fa-user text-base"></i><span>Profile</span></div>
+      </nav>
+    </div>
+  </div>
+</body>
+</html>
