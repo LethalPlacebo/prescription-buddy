@@ -40,14 +40,16 @@ class NotificationService {
     await androidPlugin?.requestNotificationsPermission();
   }
 
-  Future<void> syncPrescriptionReminders(
-    List<PrescriptionRecord> prescriptions,
-  ) async {
+  Future<void> syncPrescriptionReminders(List<PrescriptionRecord> prescriptions,
+      {required bool enabled}) async {
     if (!_initialized) {
       await initialize();
     }
 
     await _plugin.cancelAll();
+    if (!enabled) {
+      return;
+    }
 
     for (final prescription in prescriptions) {
       for (final day in prescription.repeatDays) {

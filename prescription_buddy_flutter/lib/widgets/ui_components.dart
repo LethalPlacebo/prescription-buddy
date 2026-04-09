@@ -78,7 +78,6 @@ class ScreenTemplate extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  const PhoneChrome(),
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.only(
@@ -94,27 +93,6 @@ class ScreenTemplate extends StatelessWidget {
               if (bottomBar != null)
                 Positioned(left: 18, right: 18, bottom: 18, child: bottomBar!),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PhoneChrome extends StatelessWidget {
-  const PhoneChrome({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 18),
-      child: Center(
-        child: Container(
-          width: 126,
-          height: 34,
-          decoration: BoxDecoration(
-            color: const Color(0xFF111111),
-            borderRadius: BorderRadius.circular(999),
           ),
         ),
       ),

@@ -9,12 +9,14 @@ class ProfileScreen extends StatelessWidget {
     required this.onOpenSettings,
     required this.onOpenAdmin,
     required this.onSignOut,
+    required this.showAdminConsole,
     super.key,
   });
 
   final VoidCallback onOpenSettings;
   final VoidCallback onOpenAdmin;
   final VoidCallback onSignOut;
+  final bool showAdminConsole;
 
   @override
   Widget build(BuildContext context) {
@@ -97,23 +99,18 @@ class ProfileScreen extends StatelessWidget {
                   iconColor: AppTheme.emerald,
                 ),
               ),
-              const _Separator(),
-              const _MenuAction(
-                icon: Icons.description_rounded,
-                label: 'Export medication list',
-                iconBg: Color(0xFFFFF1D8),
-                iconColor: Color(0xFF9A6B14),
-              ),
-              const _Separator(),
-              GestureDetector(
-                onTap: onOpenAdmin,
-                child: const _MenuAction(
-                  icon: Icons.admin_panel_settings_rounded,
-                  label: 'Open admin pricing console',
-                  iconBg: Color(0xFFF6D8D6),
-                  iconColor: Color(0xFFB54747),
+              if (showAdminConsole) ...[
+                const _Separator(),
+                GestureDetector(
+                  onTap: onOpenAdmin,
+                  child: const _MenuAction(
+                    icon: Icons.admin_panel_settings_rounded,
+                    label: 'Open admin pricing console',
+                    iconBg: Color(0xFFF6D8D6),
+                    iconColor: Color(0xFFB54747),
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

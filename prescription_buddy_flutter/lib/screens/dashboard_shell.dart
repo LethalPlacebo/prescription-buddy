@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 
 import '../models/medication_price_offer.dart';
 import '../models/prescription_record.dart';
+import '../models/user_settings.dart';
 import '../services/notification_service.dart';
 import '../services/pricing_repository.dart';
+import '../services/user_settings_repository.dart';
 import '../theme/app_theme.dart';
 import '../services/prescription_repository.dart';
 import '../widgets/ui_components.dart';
@@ -29,30 +31,47 @@ class DashboardShell extends StatefulWidget {
 class _DashboardShellState extends State<DashboardShell> {
   final PrescriptionRepository _repository = PrescriptionRepository();
   final PricingRepository _pricingRepository = PricingRepository();
+  final UserSettingsRepository _settingsRepository = UserSettingsRepository();
 
   int _currentIndex = 0;
   late final Stream<List<PrescriptionRecord>> _prescriptionsStream;
   late final Stream<List<MedicationPriceOffer>> _pricingOffersStream;
+  late final Stream<UserSettings> _settingsStream;
   StreamSubscription<List<PrescriptionRecord>>? _reminderSyncSubscription;
+  StreamSubscription<UserSettings>? _settingsSubscription;
+  StreamSubscription<User?>? _authTokenSubscription;
   String? _loadIssue;
+  List<PrescriptionRecord> _latestPrescriptions = const [];
+  bool _doseRemindersEnabled = true;
+  bool _isAdmin = false;
 
   @override
   void initState() {
     super.initState();
     _prescriptionsStream = _repository.watchPrescriptions();
     _pricingOffersStream = _pricingRepository.watchOffers();
+    _settingsStream = _settingsRepository.watchSettings();
     unawaited(_seedPrescriptions());
     unawaited(_seedPricingOffers());
     _reminderSyncSubscription = _prescriptionsStream.listen((prescriptions) {
-      unawaited(
-        NotificationService.instance.syncPrescriptionReminders(prescriptions),
-      );
+      _latestPrescriptions = prescriptions;
+      unawaited(_syncNotifications());
     });
+    _settingsSubscription = _settingsStream.listen((settings) {
+      _doseRemindersEnabled = settings.doseRemindersEnabled;
+      unawaited(_syncNotifications());
+    });
+    _authTokenSubscription = FirebaseAuth.instance.idTokenChanges().listen((_) {
+      unawaited(_refreshAdminState());
+    });
+    unawaited(_refreshAdminState(forceRefresh: true));
   }
 
   @override
   void dispose() {
     _reminderSyncSubscription?.cancel();
+    _settingsSubscription?.cancel();
+    _authTokenSubscription?.cancel();
     super.dispose();
   }
 
@@ -120,6 +139,7 @@ class _DashboardShellState extends State<DashboardShell> {
                   onOpenSettings: _openSettings,
                   onOpenAdmin: _openAdmin,
                   onSignOut: _signOut,
+                  showAdminConsole: _isAdmin,
                 ),
               ];
 
@@ -152,6 +172,23 @@ class _DashboardShellState extends State<DashboardShell> {
         ),
       );
     }
+  }
+
+  Future<void> _syncNotifications() {
+    return NotificationService.instance.syncPrescriptionReminders(
+      _latestPrescriptions,
+      enabled: _doseRemindersEnabled,
+    );
+  }
+
+  Future<void> _refreshAdminState({bool forceRefresh = false}) async {
+    final user = FirebaseAuth.instance.currentUser;
+    final token = await user?.getIdTokenResult(forceRefresh);
+    final isAdmin = token?.claims?['admin'] == true;
+    if (!mounted) {
+      return;
+    }
+    setState(() => _isAdmin = isAdmin);
   }
 
   PrescriptionRecord _applyPricing(
@@ -207,12 +244,22 @@ class _DashboardShellState extends State<DashboardShell> {
   }
 
   void _openSettings() {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute<void>(builder: (_) => const SettingsScreen()));
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => SettingsScreen(settingsRepository: _settingsRepository),
+      ),
+    );
   }
 
   void _openAdmin() {
+    if (!_isAdmin) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('This account does not have admin access.'),
+        ),
+      );
+      return;
+    }
     Navigator.of(
       context,
     ).push(MaterialPageRoute<void>(builder: (_) => const AdminPricingScreen()));

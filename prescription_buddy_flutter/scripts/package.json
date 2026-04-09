@@ -1,0 +1,8 @@
+{
+  "name": "prescription-buddy-admin-tools",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "firebase-admin": "^13.5.0"
+  }
+}
