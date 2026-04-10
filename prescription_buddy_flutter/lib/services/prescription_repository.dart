@@ -33,20 +33,6 @@ class PrescriptionRepository {
         );
   }
 
-  Future<void> seedStarterRecordsIfEmpty() async {
-    final collection = _collectionForUser(_currentUid);
-    final existing = await collection.limit(1).get();
-    if (existing.docs.isNotEmpty) {
-      return;
-    }
-
-    final batch = _firestore.batch();
-    for (final record in PrescriptionRecord.starterRecords()) {
-      batch.set(collection.doc(record.id), record.toMap());
-    }
-    await batch.commit();
-  }
-
   Future<void> updatePrescription(PrescriptionRecord record) {
     return _collectionForUser(_currentUid).doc(record.id).set(record.toMap());
   }

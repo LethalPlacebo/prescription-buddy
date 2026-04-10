@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../models/medication_price_offer.dart';
 import '../models/prescription_record.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ui_components.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({
     required this.prescriptions,
+    required this.availableOffers,
     required this.onOpenPrescription,
     required this.onAddPrescription,
     required this.onUpdatePrescription,
@@ -15,6 +17,7 @@ class HomeScreen extends StatelessWidget {
   });
 
   final List<PrescriptionRecord> prescriptions;
+  final List<MedicationPriceOffer> availableOffers;
   final VoidCallback onOpenPrescription;
   final Future<void> Function(PrescriptionRecord record) onAddPrescription;
   final void Function(int index, PrescriptionRecord updated)
@@ -23,7 +26,29 @@ class HomeScreen extends StatelessWidget {
       onDeletePrescription;
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final TextEditingController _searchController;
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final suggestions = _buildSuggestions();
+
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
@@ -31,70 +56,216 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.86),
                   borderRadius: BorderRadius.circular(22),
-                  onTap: () => _showAddPrescriptionDialog(context),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.86),
-                      borderRadius: BorderRadius.circular(22),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(Icons.search_rounded, color: AppTheme.muted),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Search or add a prescription',
-                            style: TextStyle(color: AppTheme.muted),
-                          ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search_rounded, color: AppTheme.muted),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        textInputAction: TextInputAction.search,
+                        onChanged: (value) =>
+                            setState(() => _searchQuery = value.trim()),
+                        decoration: const InputDecoration(
+                          hintText: 'Search prescriptions by name',
+                          hintStyle: TextStyle(color: AppTheme.muted),
+                          border: InputBorder.none,
                         ),
-                        _CircleAction(icon: Icons.add_rounded),
-                      ],
+                      ),
                     ),
-                  ),
+                    if (_searchQuery.isNotEmpty)
+                      IconButton(
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _searchQuery = '');
+                        },
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          color: AppTheme.muted,
+                        ),
+                      ),
+                  ],
                 ),
               ),
               const SizedBox(height: 18),
               const Text(
-                'Search medications, organize your list, and keep every dose on schedule.',
+                'Search medications by name and add them directly from the pricing database.',
               ),
               const SizedBox(height: 14),
               _MetricCard(
                 label: 'Active meds',
-                value: prescriptions.length.toString(),
-                hint: 'Manage prescriptions and reminders in one place',
+                value: widget.prescriptions.length.toString(),
+                hint: 'Track prescriptions and reminders in one place',
                 hintColor: AppTheme.emerald,
               ),
+              if (_searchQuery.isNotEmpty) ...[
+                const SizedBox(height: 18),
+                Text(
+                  suggestions.isEmpty
+                      ? 'No matching medications found yet.'
+                      : 'Matching medications',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.muted,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                if (suggestions.isEmpty)
+                  const _EmptySearchState()
+                else
+                  Column(
+                    children: List.generate(suggestions.length, (index) {
+                      final suggestion = suggestions[index];
+                      return Column(
+                        children: [
+                          _SearchResultRow(
+                            suggestion: suggestion,
+                            onTap: () => _addSuggestedMedication(suggestion),
+                          ),
+                          if (index != suggestions.length - 1)
+                            const _ThinDivider(),
+                        ],
+                      );
+                    }),
+                  ),
+              ],
             ],
           ),
         ),
         const SizedBox(height: 22),
         const SectionHeader('Your prescriptions', trailing: 'Tap to manage'),
         GlassCard(
-          child: Column(
-            children: List.generate(prescriptions.length, (index) {
-              final item = prescriptions[index];
-              return Column(
-                children: [
-                  _ListItem(
-                    data: item,
-                    onTap: () => _showPrescriptionActions(context, index, item),
-                  ),
-                  if (index != prescriptions.length - 1) const _ThinDivider(),
-                ],
-              );
-            }),
-          ),
+          child: widget.prescriptions.isEmpty
+              ? const _EmptyTrackedState()
+              : Column(
+                  children: List.generate(widget.prescriptions.length, (index) {
+                    final item = widget.prescriptions[index];
+                    return Column(
+                      children: [
+                        _ListItem(
+                          data: item,
+                          onTap: () =>
+                              _showPrescriptionActions(context, index, item),
+                        ),
+                        if (index != widget.prescriptions.length - 1)
+                          const _ThinDivider(),
+                      ],
+                    );
+                  }),
+                ),
         ),
       ],
     );
+  }
+
+  List<_MedicationSuggestion> _buildSuggestions() {
+    if (_searchQuery.isEmpty) {
+      return const [];
+    }
+
+    final normalizedQuery = _normalize(_searchQuery);
+    final seen = <String>{};
+    final suggestions = <_MedicationSuggestion>[];
+
+    final sortedOffers = [...widget.availableOffers]..sort((a, b) {
+        final priceCompare =
+            _numericPrice(a.priceLabel).compareTo(_numericPrice(b.priceLabel));
+        if (priceCompare != 0) {
+          return priceCompare;
+        }
+        return a.medicationName.compareTo(b.medicationName);
+      });
+
+    for (final offer in sortedOffers) {
+      final normalizedName = _normalize(offer.medicationName);
+      final normalizedGeneric = _normalize(offer.genericName ?? '');
+      if (!normalizedName.contains(normalizedQuery) &&
+          !normalizedGeneric.contains(normalizedQuery)) {
+        continue;
+      }
+
+      final key = normalizedName;
+      if (seen.contains(key)) {
+        continue;
+      }
+
+      seen.add(key);
+      suggestions.add(
+        _MedicationSuggestion(
+          medicationName: offer.medicationName,
+          storeName: offer.storeName,
+          priceLabel: offer.priceLabel,
+        ),
+      );
+
+      if (suggestions.length == 8) {
+        break;
+      }
+    }
+
+    return suggestions;
+  }
+
+  Future<void> _addSuggestedMedication(_MedicationSuggestion suggestion) async {
+    final alreadyTracked = widget.prescriptions.any(
+      (record) =>
+          _normalize(record.title) == _normalize(suggestion.medicationName),
+    );
+
+    if (alreadyTracked) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('${suggestion.medicationName} is already in your list.'),
+        ),
+      );
+      return;
+    }
+
+    final record = PrescriptionRecord(
+      id: _buildRecordId(suggestion.medicationName),
+      icon: Icons.medication_rounded,
+      iconBg: const Color(0xFFE8F4EF),
+      iconColor: AppTheme.emerald,
+      title: suggestion.medicationName,
+      subtitle: 'Tracked from ${suggestion.storeName}',
+      price: suggestion.priceLabel,
+      note: suggestion.storeName,
+      noteColor: AppTheme.emerald,
+      reminderLabel: 'Morning',
+      reminderTime: const TimeOfDay(hour: 9, minute: 0),
+      repeatDays: const {'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'},
+      reminderTimeBackground: const Color(0xFFD8F1EB),
+      sortOrder: widget.prescriptions.length,
+    );
+
+    await widget.onAddPrescription(record);
+    if (!mounted) {
+      return;
+    }
+
+    _searchController.clear();
+    setState(() => _searchQuery = '');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${suggestion.medicationName} added')),
+    );
+  }
+
+  double _numericPrice(String value) {
+    return double.tryParse(value.replaceAll(RegExp(r'[^0-9.]'), '')) ??
+        double.infinity;
+  }
+
+  String _normalize(String value) {
+    return value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), ' ').trim();
   }
 
   Future<void> _showPrescriptionActions(
@@ -174,7 +345,7 @@ class HomeScreen extends StatelessWidget {
                     background: const Color(0xFFFFE8E6),
                     onTap: () {
                       Navigator.of(context).pop();
-                      onDeletePrescription(index, item);
+                      widget.onDeletePrescription(index, item);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('${item.title} deleted')),
                       );
@@ -190,108 +361,6 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-        );
-      },
-    );
-  }
-
-  Future<void> _showAddPrescriptionDialog(BuildContext context) async {
-    final titleController = TextEditingController();
-    final subtitleController = TextEditingController();
-    final priceController = TextEditingController();
-
-    await showDialog<void>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFFF9F4EC),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
-          title: const Text(
-            'Add prescription',
-            style: TextStyle(fontWeight: FontWeight.w800),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _DialogField(
-                controller: titleController,
-                label: 'Prescription name',
-              ),
-              const SizedBox(height: 12),
-              _DialogField(
-                controller: subtitleController,
-                label: 'Details or pharmacy',
-              ),
-              const SizedBox(height: 12),
-              _DialogField(
-                controller: priceController,
-                label: 'Price',
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              style: FilledButton.styleFrom(backgroundColor: AppTheme.emerald),
-              onPressed: () async {
-                final title = titleController.text.trim();
-                if (title.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Enter a prescription name to add it.'),
-                    ),
-                  );
-                  return;
-                }
-
-                final details = subtitleController.text.trim().isEmpty
-                    ? '30 tablets - Local pharmacy'
-                    : subtitleController.text.trim();
-                final price = priceController.text.trim().isEmpty
-                    ? '\$--'
-                    : priceController.text.trim();
-
-                final record = PrescriptionRecord(
-                  id: _buildRecordId(title),
-                  icon: Icons.medication_rounded,
-                  iconBg: const Color(0xFFE8F4EF),
-                  iconColor: AppTheme.emerald,
-                  title: title,
-                  subtitle: details,
-                  price: price.startsWith('\$') ? price : '\$$price',
-                  note: 'Newly added',
-                  reminderLabel: 'Morning',
-                  reminderTime: const TimeOfDay(hour: 9, minute: 0),
-                  repeatDays: const {
-                    'Mon',
-                    'Tue',
-                    'Wed',
-                    'Thu',
-                    'Fri',
-                    'Sat',
-                    'Sun',
-                  },
-                  reminderTimeBackground: const Color(0xFFD8F1EB),
-                  sortOrder: prescriptions.length,
-                );
-
-                await onAddPrescription(record);
-                if (!context.mounted) {
-                  return;
-                }
-                Navigator.of(dialogContext).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('$title added')),
-                );
-              },
-              child: const Text('Add'),
-            ),
-          ],
         );
       },
     );
@@ -345,7 +414,7 @@ class HomeScreen extends StatelessWidget {
             FilledButton(
               style: FilledButton.styleFrom(backgroundColor: AppTheme.emerald),
               onPressed: () {
-                onUpdatePrescription(
+                widget.onUpdatePrescription(
                   index,
                   item.copyWith(
                     title: titleController.text,
@@ -365,6 +434,18 @@ class HomeScreen extends StatelessWidget {
       },
     );
   }
+}
+
+class _MedicationSuggestion {
+  const _MedicationSuggestion({
+    required this.medicationName,
+    required this.storeName,
+    required this.priceLabel,
+  });
+
+  final String medicationName;
+  final String storeName;
+  final String priceLabel;
 }
 
 class _MetricCard extends StatelessWidget {
@@ -421,21 +502,138 @@ class _MetricCard extends StatelessWidget {
   }
 }
 
-class _CircleAction extends StatelessWidget {
-  const _CircleAction({required this.icon});
+class _EmptyTrackedState extends StatelessWidget {
+  const _EmptyTrackedState();
 
-  final IconData icon;
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.manage_search_rounded,
+            color: AppTheme.emerald,
+            size: 22,
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'Search for prescriptions to keep track of them here.',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.ink,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptySearchState extends StatelessWidget {
+  const _EmptySearchState();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 40,
-      height: 40,
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.emerald,
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Icon(icon, size: 18, color: Colors.white),
+      child: const Text(
+        'Try a broader medication name to see matching options from the database.',
+        style: TextStyle(
+          fontSize: 14,
+          color: AppTheme.muted,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _SearchResultRow extends StatelessWidget {
+  const _SearchResultRow({
+    required this.suggestion,
+    required this.onTap,
+  });
+
+  final _MedicationSuggestion suggestion;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8F4EF),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.medication_rounded,
+                  color: AppTheme.emerald,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      suggestion.medicationName,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${suggestion.storeName} • ${suggestion.priceLabel}',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppTheme.muted,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppTheme.emerald,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Text(
+                  'Add',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -40,7 +40,6 @@ class _DashboardShellState extends State<DashboardShell> {
   StreamSubscription<List<PrescriptionRecord>>? _reminderSyncSubscription;
   StreamSubscription<UserSettings>? _settingsSubscription;
   StreamSubscription<User?>? _authTokenSubscription;
-  String? _loadIssue;
   List<PrescriptionRecord> _latestPrescriptions = const [];
   bool _doseRemindersEnabled = true;
   bool _isAdmin = false;
@@ -51,7 +50,6 @@ class _DashboardShellState extends State<DashboardShell> {
     _prescriptionsStream = _repository.watchPrescriptions();
     _pricingOffersStream = _pricingRepository.watchOffers();
     _settingsStream = _settingsRepository.watchSettings();
-    unawaited(_seedPrescriptions());
     unawaited(_seedPricingOffers());
     _reminderSyncSubscription = _prescriptionsStream.listen((prescriptions) {
       _latestPrescriptions = prescriptions;
@@ -114,10 +112,6 @@ class _DashboardShellState extends State<DashboardShell> {
 
               final prescriptions =
                   prescriptionSnapshot.data ?? const <PrescriptionRecord>[];
-              if (_loadIssue != null && prescriptions.isEmpty) {
-                return _DashboardMessage(message: _loadIssue!);
-              }
-
               final pricedPrescriptions = prescriptions
                   .map((item) => _applyPricing(item, pricingOffers))
                   .toList();
@@ -125,6 +119,7 @@ class _DashboardShellState extends State<DashboardShell> {
               final screens = <Widget>[
                 HomeScreen(
                   prescriptions: pricedPrescriptions,
+                  availableOffers: pricingOffers,
                   onOpenPrescription: _openPrescription,
                   onAddPrescription: _addPrescription,
                   onUpdatePrescription: _updatePrescription,
@@ -215,26 +210,6 @@ class _DashboardShellState extends State<DashboardShell> {
 
   String _normalize(String value) {
     return value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), ' ').trim();
-  }
-
-  Future<void> _seedPrescriptions() async {
-    try {
-      await _repository
-          .seedStarterRecordsIfEmpty()
-          .timeout(const Duration(seconds: 8));
-      if (!mounted) {
-        return;
-      }
-      setState(() => _loadIssue = null);
-    } catch (_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _loadIssue =
-            'We could not finish loading your prescription data. Please check Firestore setup and try again.';
-      });
-    }
   }
 
   void _openPrescription() {
