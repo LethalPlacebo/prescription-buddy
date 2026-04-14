@@ -13,5 +13,6 @@ void main() {
 
     expect(find.textContaining('Prescription Buddy account'), findsWidgets);
     expect(find.text('Log in'), findsOneWidget);
+    expect(find.text('Continue with Google'), findsOneWidget);
   });
 }

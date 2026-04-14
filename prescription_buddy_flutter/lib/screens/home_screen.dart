@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../models/medication_price_offer.dart';
 import '../models/prescription_record.dart';
+import '../services/pricing_repository.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ui_components.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
     required this.prescriptions,
-    required this.availableOffers,
+    required this.repository,
     required this.onOpenPrescription,
     required this.onAddPrescription,
     required this.onUpdatePrescription,
@@ -17,7 +18,7 @@ class HomeScreen extends StatefulWidget {
   });
 
   final List<PrescriptionRecord> prescriptions;
-  final List<MedicationPriceOffer> availableOffers;
+  final PricingRepository repository;
   final VoidCallback onOpenPrescription;
   final Future<void> Function(PrescriptionRecord record) onAddPrescription;
   final void Function(int index, PrescriptionRecord updated)
@@ -47,8 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final suggestions = _buildSuggestions();
-
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
@@ -106,11 +105,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               if (_searchQuery.isNotEmpty) ...[
                 const SizedBox(height: 18),
-                Text(
-                  suggestions.isEmpty
-                      ? 'No matching medications found yet.'
-                      : 'Matching medications',
-                  style: const TextStyle(
+                const Text(
+                  'Matching medications',
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: AppTheme.muted,
@@ -118,24 +115,34 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                if (suggestions.isEmpty)
-                  const _EmptySearchState()
-                else
-                  Column(
-                    children: List.generate(suggestions.length, (index) {
-                      final suggestion = suggestions[index];
-                      return Column(
-                        children: [
-                          _SearchResultRow(
-                            suggestion: suggestion,
-                            onTap: () => _addSuggestedMedication(suggestion),
-                          ),
-                          if (index != suggestions.length - 1)
-                            const _ThinDivider(),
-                        ],
-                      );
-                    }),
-                  ),
+                StreamBuilder<List<MedicationPriceOffer>>(
+                  stream: widget.repository.watchOffersForQuery(_searchQuery),
+                  initialData: const <MedicationPriceOffer>[],
+                  builder: (context, snapshot) {
+                    final suggestions = _buildSuggestions(
+                      snapshot.data ?? const <MedicationPriceOffer>[],
+                    );
+                    if (suggestions.isEmpty) {
+                      return const _EmptySearchState();
+                    }
+
+                    return Column(
+                      children: List.generate(suggestions.length, (index) {
+                        final suggestion = suggestions[index];
+                        return Column(
+                          children: [
+                            _SearchResultRow(
+                              suggestion: suggestion,
+                              onTap: () => _addSuggestedMedication(suggestion),
+                            ),
+                            if (index != suggestions.length - 1)
+                              const _ThinDivider(),
+                          ],
+                        );
+                      }),
+                    );
+                  },
+                ),
               ],
             ],
           ),
@@ -166,38 +173,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  List<_MedicationSuggestion> _buildSuggestions() {
-    if (_searchQuery.isEmpty) {
-      return const [];
-    }
-
-    final normalizedQuery = _normalize(_searchQuery);
+  List<_MedicationSuggestion> _buildSuggestions(
+    List<MedicationPriceOffer> offers,
+  ) {
     final seen = <String>{};
     final suggestions = <_MedicationSuggestion>[];
 
-    final sortedOffers = [...widget.availableOffers]..sort((a, b) {
-        final priceCompare =
-            _numericPrice(a.priceLabel).compareTo(_numericPrice(b.priceLabel));
-        if (priceCompare != 0) {
-          return priceCompare;
-        }
-        return a.medicationName.compareTo(b.medicationName);
-      });
-
-    for (final offer in sortedOffers) {
+    for (final offer in offers) {
       final normalizedName = _normalize(offer.medicationName);
-      final normalizedGeneric = _normalize(offer.genericName ?? '');
-      if (!normalizedName.contains(normalizedQuery) &&
-          !normalizedGeneric.contains(normalizedQuery)) {
+      if (seen.contains(normalizedName)) {
         continue;
       }
 
-      final key = normalizedName;
-      if (seen.contains(key)) {
-        continue;
-      }
-
-      seen.add(key);
+      seen.add(normalizedName);
       suggestions.add(
         _MedicationSuggestion(
           medicationName: offer.medicationName,
@@ -257,11 +245,6 @@ class _HomeScreenState extends State<HomeScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${suggestion.medicationName} added')),
     );
-  }
-
-  double _numericPrice(String value) {
-    return double.tryParse(value.replaceAll(RegExp(r'[^0-9.]'), '')) ??
-        double.infinity;
   }
 
   String _normalize(String value) {
@@ -508,7 +491,7 @@ class _EmptyTrackedState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

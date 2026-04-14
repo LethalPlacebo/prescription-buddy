@@ -2,15 +2,14 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-import '../models/medication_price_offer.dart';
 import '../models/prescription_record.dart';
 import '../models/user_settings.dart';
 import '../services/notification_service.dart';
 import '../services/pricing_repository.dart';
-import '../services/user_settings_repository.dart';
-import '../theme/app_theme.dart';
 import '../services/prescription_repository.dart';
+import '../services/user_settings_repository.dart';
 import '../widgets/ui_components.dart';
 import 'admin_pricing_screen.dart';
 import 'auth_screen.dart';
@@ -35,7 +34,6 @@ class _DashboardShellState extends State<DashboardShell> {
 
   int _currentIndex = 0;
   late final Stream<List<PrescriptionRecord>> _prescriptionsStream;
-  late final Stream<List<MedicationPriceOffer>> _pricingOffersStream;
   late final Stream<UserSettings> _settingsStream;
   StreamSubscription<List<PrescriptionRecord>>? _reminderSyncSubscription;
   StreamSubscription<UserSettings>? _settingsSubscription;
@@ -48,7 +46,6 @@ class _DashboardShellState extends State<DashboardShell> {
   void initState() {
     super.initState();
     _prescriptionsStream = _repository.watchPrescriptions();
-    _pricingOffersStream = _pricingRepository.watchOffers();
     _settingsStream = _settingsRepository.watchSettings();
     unawaited(_seedPricingOffers());
     _reminderSyncSubscription = _prescriptionsStream.listen((prescriptions) {
@@ -93,59 +90,49 @@ class _DashboardShellState extends State<DashboardShell> {
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
       ),
-      child: StreamBuilder<List<MedicationPriceOffer>>(
-        stream: _pricingOffersStream,
-        initialData: const <MedicationPriceOffer>[],
+      child: StreamBuilder<List<PrescriptionRecord>>(
+        stream: _prescriptionsStream,
+        initialData: const <PrescriptionRecord>[],
         builder: (context, snapshot) {
-          final pricingOffers = snapshot.data ?? const <MedicationPriceOffer>[];
+          if (snapshot.hasError) {
+            return const _DashboardMessage(
+              message:
+                  'We could not sync prescriptions right now. Please verify your Firestore database is created and available.',
+            );
+          }
 
-          return StreamBuilder<List<PrescriptionRecord>>(
-            stream: _prescriptionsStream,
-            initialData: const <PrescriptionRecord>[],
-            builder: (context, prescriptionSnapshot) {
-              if (prescriptionSnapshot.hasError) {
-                return const _DashboardMessage(
-                  message:
-                      'We could not sync prescriptions right now. Please verify your Firestore database is created and available.',
-                );
-              }
+          final prescriptions = snapshot.data ?? const <PrescriptionRecord>[];
+          final screens = <Widget>[
+            HomeScreen(
+              prescriptions: prescriptions,
+              repository: _pricingRepository,
+              onOpenPrescription: _openPrescription,
+              onAddPrescription: _addPrescription,
+              onUpdatePrescription: _updatePrescription,
+              onDeletePrescription: _deletePrescription,
+            ),
+            RemindersScreen(
+              prescriptions: prescriptions,
+              onUpdatePrescription: _updatePrescription,
+            ),
+            PricingScreen(
+              prescriptions: prescriptions,
+              repository: _pricingRepository,
+            ),
+            ProfileScreen(
+              onOpenSettings: _openSettings,
+              onOpenAdmin: _openAdmin,
+              onSignOut: _signOut,
+              showAdminConsole: _isAdmin,
+            ),
+          ];
 
-              final prescriptions =
-                  prescriptionSnapshot.data ?? const <PrescriptionRecord>[];
-              final pricedPrescriptions = prescriptions
-                  .map((item) => _applyPricing(item, pricingOffers))
-                  .toList();
-
-              final screens = <Widget>[
-                HomeScreen(
-                  prescriptions: pricedPrescriptions,
-                  availableOffers: pricingOffers,
-                  onOpenPrescription: _openPrescription,
-                  onAddPrescription: _addPrescription,
-                  onUpdatePrescription: _updatePrescription,
-                  onDeletePrescription: _deletePrescription,
-                ),
-                RemindersScreen(
-                  prescriptions: pricedPrescriptions,
-                  onUpdatePrescription: _updatePrescription,
-                ),
-                const PricingScreen(),
-                ProfileScreen(
-                  onOpenSettings: _openSettings,
-                  onOpenAdmin: _openAdmin,
-                  onSignOut: _signOut,
-                  showAdminConsole: _isAdmin,
-                ),
-              ];
-
-              return AnimatedSwitcher(
-                duration: const Duration(milliseconds: 250),
-                child: KeyedSubtree(
-                  key: ValueKey(_currentIndex),
-                  child: screens[_currentIndex],
-                ),
-              );
-            },
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            child: KeyedSubtree(
+              key: ValueKey(_currentIndex),
+              child: screens[_currentIndex],
+            ),
           );
         },
       ),
@@ -186,32 +173,6 @@ class _DashboardShellState extends State<DashboardShell> {
     setState(() => _isAdmin = isAdmin);
   }
 
-  PrescriptionRecord _applyPricing(
-    PrescriptionRecord record,
-    List<MedicationPriceOffer> offers,
-  ) {
-    final matches = offers.where((offer) {
-      final medication = _normalize(record.title);
-      final offerName = _normalize(offer.medicationName);
-      return offerName.contains(medication) || medication.contains(offerName);
-    }).toList();
-
-    if (matches.isEmpty) {
-      return record;
-    }
-
-    final bestMatch = matches.first;
-    return record.copyWith(
-      price: bestMatch.priceLabel,
-      note: bestMatch.storeName,
-      noteColor: AppTheme.emerald,
-    );
-  }
-
-  String _normalize(String value) {
-    return value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), ' ').trim();
-  }
-
   void _openPrescription() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(builder: (_) => const PrescriptionDetailScreen()),
@@ -241,7 +202,9 @@ class _DashboardShellState extends State<DashboardShell> {
   }
 
   Future<void> _updatePrescription(
-      int index, PrescriptionRecord updated) async {
+    int index,
+    PrescriptionRecord updated,
+  ) async {
     try {
       await _repository.updatePrescription(updated);
     } catch (_) {
@@ -267,7 +230,10 @@ class _DashboardShellState extends State<DashboardShell> {
     }
   }
 
-  Future<void> _deletePrescription(int index, PrescriptionRecord record) async {
+  Future<void> _deletePrescription(
+    int index,
+    PrescriptionRecord record,
+  ) async {
     try {
       await _repository.deletePrescription(record.id);
     } catch (_) {
@@ -282,6 +248,8 @@ class _DashboardShellState extends State<DashboardShell> {
 
   Future<void> _signOut() async {
     try {
+      await GoogleSignIn.instance.initialize();
+      await GoogleSignIn.instance.signOut();
       await FirebaseAuth.instance.signOut();
       if (!mounted) {
         return;

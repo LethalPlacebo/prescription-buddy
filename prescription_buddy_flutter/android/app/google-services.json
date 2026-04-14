@@ -12,7 +12,12 @@
           "package_name": "com.example.prescription_buddy_flutter"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "671488202637-o525erfg77gor6r82dcdlsl0pc9s0haa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDj_lN8U_VRlE7seIGzd6l9WmIfQb8SfWc"
@@ -20,7 +25,57 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "671488202637-o525erfg77gor6r82dcdlsl0pc9s0haa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:671488202637:android:0c370f8fed5e0d41730fc4",
+        "android_client_info": {
+          "package_name": "com.prescriptionbuddy.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "671488202637-5krtv0ag5eg9d07peouc65koebvef5pg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.prescriptionbuddy.app",
+            "certificate_hash": "4aef7ca1cbdf740854c60e27005ee748e7aa4798"
+          }
+        },
+        {
+          "client_id": "671488202637-pm14cldj6thcifrmrcnos97jk9a5vh46.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.prescriptionbuddy.app",
+            "certificate_hash": "cc85ceec126c11377d674754f1ee545c3c59ddbb"
+          }
+        },
+        {
+          "client_id": "671488202637-o525erfg77gor6r82dcdlsl0pc9s0haa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDj_lN8U_VRlE7seIGzd6l9WmIfQb8SfWc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "671488202637-o525erfg77gor6r82dcdlsl0pc9s0haa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

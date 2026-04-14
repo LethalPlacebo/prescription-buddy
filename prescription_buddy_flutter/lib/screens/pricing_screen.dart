@@ -1,68 +1,68 @@
 import 'package:flutter/material.dart';
 
 import '../models/medication_price_offer.dart';
+import '../models/prescription_record.dart';
 import '../services/pricing_repository.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ui_components.dart';
 
-class PricingScreen extends StatefulWidget {
-  const PricingScreen({super.key});
+class PricingScreen extends StatelessWidget {
+  const PricingScreen({
+    required this.prescriptions,
+    required this.repository,
+    super.key,
+  });
 
-  @override
-  State<PricingScreen> createState() => _PricingScreenState();
-}
-
-class _PricingScreenState extends State<PricingScreen> {
-  final PricingRepository _repository = PricingRepository();
-  late final Future<void> _seedFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _seedFuture = _repository.seedStarterOffersIfEmpty();
-  }
+  final List<PrescriptionRecord> prescriptions;
+  final PricingRepository repository;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
-      future: _seedFuture,
-      builder: (context, seedSnapshot) {
-        return StreamBuilder<List<MedicationPriceOffer>>(
-          stream: _repository.watchOffers(),
-          initialData: const <MedicationPriceOffer>[],
-          builder: (context, snapshot) {
-            final offers = snapshot.data ?? const <MedicationPriceOffer>[];
+    return StreamBuilder<List<MedicationPriceOffer>>(
+      stream: repository.watchOffersForPrescriptions(prescriptions),
+      initialData: const <MedicationPriceOffer>[],
+      builder: (context, snapshot) {
+        final offers = snapshot.data ?? const <MedicationPriceOffer>[];
 
-            return ListView(
-              physics: const BouncingScrollPhysics(),
-              children: [
-                GlassCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const TopPill(
-                        icon: Icons.savings_rounded,
-                        label: 'Quarterly price data',
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Medication pricing',
-                        style: Theme.of(context).textTheme.displaySmall,
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Prices are source-based and last updated labels are shown on every offer. This schema is admin-managed today and ready for future CMS import fields.',
-                      ),
-                    ],
+        return ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            GlassCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const TopPill(
+                    icon: Icons.savings_rounded,
+                    label: 'Quarterly price data',
                   ),
-                ),
-                const SizedBox(height: 22),
-                const SectionHeader('Available offers',
-                    trailing: 'Source-labeled'),
-                GlassCard(
-                  child: offers.isEmpty
+                  const SizedBox(height: 16),
+                  Text(
+                    'Medication pricing',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    prescriptions.isEmpty
+                        ? 'Add a medication to your personal list and matching pricing options will appear here.'
+                        : 'Pricing is now focused on the medications you already track, with alternate doses and pharmacies shown when available.',
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 22),
+            SectionHeader(
+              prescriptions.isEmpty ? 'Your pricing' : 'Matching offers',
+              trailing:
+                  prescriptions.isEmpty ? 'Add meds first' : 'Source-labeled',
+            ),
+            GlassCard(
+              child: prescriptions.isEmpty
+                  ? const Text(
+                      'Add medications to your personal list to see relevant prices here.',
+                    )
+                  : offers.isEmpty
                       ? const Text(
-                          'No pricing offers available yet.',
+                          'No matching pricing offers were found for your current medications yet.',
                         )
                       : Column(
                           children: List.generate(offers.length, (index) {
@@ -76,10 +76,8 @@ class _PricingScreenState extends State<PricingScreen> {
                             );
                           }),
                         ),
-                ),
-              ],
-            );
-          },
+            ),
+          ],
         );
       },
     );

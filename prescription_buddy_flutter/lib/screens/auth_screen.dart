@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../theme/app_theme.dart';
 import '../widgets/ui_components.dart';
@@ -13,6 +16,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -24,6 +28,15 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _acceptedTerms = true;
   bool _obscurePassword = true;
   bool _isSubmitting = false;
+  bool _isGoogleSubmitting = false;
+  bool _googleSupported = true;
+  late final Future<void> _googleInitFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _googleInitFuture = _initializeGoogleSignIn();
+  }
 
   @override
   void dispose() {
@@ -87,6 +100,60 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  Future<void> _signInWithGoogle() async {
+    FocusScope.of(context).unfocus();
+    setState(() => _isGoogleSubmitting = true);
+
+    try {
+      await _googleInitFuture;
+      final googleUser = await _googleSignIn.authenticate();
+      final googleAuth = googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance.currentUser?.reload();
+
+      if (!mounted) {
+        return;
+      }
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(
+          builder: (_) => const DashboardShell(),
+        ),
+      );
+    } on GoogleSignInException catch (error) {
+      final cancelled = error.code.toString().toLowerCase().contains('cancel');
+      if (!cancelled) {
+        _showMessage(
+          'Google sign-in could not be completed. Please verify Google sign-in is enabled in Firebase and try again.',
+        );
+      }
+    } on FirebaseAuthException catch (error) {
+      _showMessage(_friendlyErrorMessage(error));
+    } catch (_) {
+      _showMessage('Google sign-in could not be completed right now.');
+    } finally {
+      if (mounted) {
+        setState(() => _isGoogleSubmitting = false);
+      }
+    }
+  }
+
+  Future<void> _initializeGoogleSignIn() async {
+    try {
+      await _googleSignIn.initialize();
+    } on UnimplementedError {
+      if (mounted) {
+        setState(() => _googleSupported = false);
+      } else {
+        _googleSupported = false;
+      }
+    }
+  }
+
   void _showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
@@ -108,9 +175,11 @@ class _AuthScreenState extends State<AuthScreen> {
       case 'weak-password':
         return 'Use a password with at least 6 characters.';
       case 'operation-not-allowed':
-        return 'Enable Email/Password sign-in in Firebase Authentication.';
+        return 'Enable Email/Password and Google sign-in in Firebase Authentication.';
       case 'too-many-requests':
         return 'Too many attempts. Please wait and try again.';
+      case 'account-exists-with-different-credential':
+        return 'An account already exists with this email using another sign-in method.';
       default:
         return error.message ?? 'Authentication failed. Please try again.';
     }
@@ -345,7 +414,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         : (_isLogin
                             ? 'Continue to Dashboard'
                             : 'Create account'),
-                    onPressed: _isSubmitting ? null : _submit,
+                    onPressed:
+                        _isSubmitting || _isGoogleSubmitting ? null : _submit,
                   ),
                   const SizedBox(height: 18),
                   Row(
@@ -367,9 +437,16 @@ class _AuthScreenState extends State<AuthScreen> {
                     ],
                   ),
                   const SizedBox(height: 18),
-                  const _SocialButton(
-                    label: 'Continue with Google',
+                  _SocialButton(
+                    label: _isGoogleSubmitting
+                        ? 'Connecting Google...'
+                        : 'Continue with Google',
                     icon: Icons.public_rounded,
+                    onTap: _isSubmitting ||
+                            _isGoogleSubmitting ||
+                            !_googleSupported
+                        ? null
+                        : _signInWithGoogle,
                   ),
                 ],
               ),
@@ -486,32 +563,51 @@ class _InputField extends StatelessWidget {
 }
 
 class _SocialButton extends StatelessWidget {
-  const _SocialButton({required this.label, required this.icon});
+  const _SocialButton({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
 
   final String label;
   final IconData icon;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.88),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: AppTheme.ink),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              color: AppTheme.ink,
-              fontWeight: FontWeight.w700,
-            ),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: onTap == null ? 0.62 : 0.88),
+            borderRadius: BorderRadius.circular(20),
           ),
-        ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                color: onTap == null
+                    ? AppTheme.muted.withValues(alpha: 0.7)
+                    : AppTheme.ink,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: onTap == null
+                      ? AppTheme.muted.withValues(alpha: 0.7)
+                      : AppTheme.ink,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

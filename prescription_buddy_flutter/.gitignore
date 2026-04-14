@@ -48,3 +48,6 @@ app.*.map.json
 service-account*.json
 firebase-admin*.json
 scripts/node_modules/
+android/key.properties
+android/*.jks
+android/*.keystore
